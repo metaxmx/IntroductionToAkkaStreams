@@ -1,0 +1,75 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>WebSocket Example</title>
+</head>
+<body>
+<h1>WebSocket Example</h1>
+<form>
+    <label for="username">Username: </label>
+    <input id="username" type="text" value="Hugo">
+    <input onclick="connect();" value="Connect" type="button">
+    <input onclick="disconnect();" value="Disconnect" type="button">
+</form>
+<br>
+<label for="msg">Message: </label>
+<input type="text" id="msg">
+<button onclick="sendMsg(); return false;">Send</button>
+<br>
+<textarea id="messagesTextArea" rows="30" cols="200"></textarea>
+<script type="text/javascript">
+
+    var messagesTextArea = document.getElementById("messagesTextArea");
+    var usernameInput = document.getElementById("username");
+    var messageInput = document.getElementById("msg");
+
+    var webSocket = null;
+
+    function connect() {
+        disconnect();
+        messagesTextArea.value = '';
+        webSocket = new WebSocket("ws://localhost:9000/websocket-chat?username=" + usernameInput.value);
+        webSocket.onopen = function (message) {
+            processOpen(message);
+        };
+        webSocket.onclose = function (message) {
+            processClose(message);
+        };
+        webSocket.onerror = function (message) {
+            processError(message);
+        };
+        webSocket.onmessage = function (message) {
+            processMessage(message);
+        };
+    }
+
+    function disconnect() {
+        if (webSocket) {
+            webSocket.close();
+        }
+    }
+
+    function processOpen(message) {
+        messagesTextArea.value += "Server Connected\n";
+    }
+
+    function processClose(message) {
+        messagesTextArea.value += "Server Disconnected\n";
+    }
+
+    function processError(message) {
+        messagesTextArea.value += "Error " + message +"\n";
+    }
+
+    function processMessage(message) {
+        messagesTextArea.value += message.data + "\n";
+    }
+
+    function sendMsg() {
+        var msg = messageInput.value;
+        messageInput.value = "";
+        webSocket.send(msg);
+    }
+</script>
+</body>
+</html>
