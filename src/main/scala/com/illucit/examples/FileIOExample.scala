@@ -9,8 +9,9 @@ import akka.stream.scaladsl.{FileIO, Flow, Keep, RunnableGraph, Sink, Source}
 import akka.stream.{ActorMaterializer, IOResult, Materializer, ThrottleMode}
 import akka.util.ByteString
 
-import scala.concurrent.duration._
 import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
 object FileIOExample extends App {
